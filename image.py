@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
-from PIL import Image, ImageTk, ImageFilter
+from PIL import Image, ImageTk, ImageFilter, ImageEnhance
 
 class ImageEditorApp:
     def __init__(self, root):
@@ -26,6 +26,11 @@ class ImageEditorApp:
         self.edit_menu.add_command(label="Resize", command=self.resize_image)
         self.edit_menu.add_command(label="Blur", command=lambda: self.apply_filter(ImageFilter.BLUR))
         self.edit_menu.add_command(label="Sharpen", command=lambda: self.apply_filter(ImageFilter.SHARPEN))
+        self.edit_menu.add_command(label="Adjust Brightness", command=self.adjust_brightness)
+        self.edit_menu.add_command(label="Adjust Contrast", command=self.adjust_contrast)
+        self.edit_menu.add_command(label="Adjust Saturation", command=self.adjust_saturation)
+        self.edit_menu.add_command(label="Flip Horizontally", command=lambda: self.flip_image("horizontal"))
+        self.edit_menu.add_command(label="Flip Vertically", command=lambda: self.flip_image("vertical"))
         self.image = None
 
     def open_image(self):
@@ -81,6 +86,32 @@ class ImageEditorApp:
     def apply_filter(self, filter_type):
         if self.image:
             self.image = self.image.filter(filter_type)
+            self.display_image()
+
+    def adjust_brightness(self):
+        if self.image:
+            enhancer = ImageEnhance.Brightness(self.image)
+            self.image = enhancer.enhance(1.5)
+            self.display_image()
+
+    def adjust_contrast(self):
+        if self.image:
+            enhancer = ImageEnhance.Contrast(self.image)
+            self.image = enhancer.enhance(1.5)
+            self.display_image()
+
+    def adjust_saturation(self):
+        if self.image:
+            enhancer = ImageEnhance.Color(self.image)
+            self.image = enhancer.enhance(1.5)
+            self.display_image()
+
+    def flip_image(self, direction):
+        if self.image:
+            if direction == "horizontal":
+                self.image = self.image.transpose(Image.FLIP_LEFT_RIGHT)
+            elif direction == "vertical":
+                self.image = self.image.transpose(Image.FLIP_TOP_BOTTOM)
             self.display_image()
 
 if __name__ == "__main__":
