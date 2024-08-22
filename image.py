@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import filedialog
-from PIL import Image, ImageTk, ImageFilter, ImageEnhance
+from tkinter import filedialog, simpledialog
+from PIL import Image, ImageTk, ImageFilter, ImageEnhance, ImageOps, ImageDraw, ImageFont
 
 class ImageEditorApp:
     def __init__(self, root):
@@ -35,6 +35,10 @@ class ImageEditorApp:
         self.edit_menu.add_command(label="Adjust Saturation", command=self.adjust_saturation)
         self.edit_menu.add_command(label="Flip Horizontally", command=lambda: self.flip_image("horizontal"))
         self.edit_menu.add_command(label="Flip Vertically", command=lambda: self.flip_image("vertical"))
+        self.edit_menu.add_command(label="Adjust Hue", command=self.adjust_hue)
+        self.edit_menu.add_command(label="Invert Colors", command=self.invert_colors)
+        self.edit_menu.add_command(label="Add Text", command=self.add_text)
+        self.edit_menu.add_command(label="Draw Rectangle", command=self.draw_rectangle)
         self.edit_menu.add_separator()
         self.edit_menu.add_command(label="Undo", command=self.undo)
         self.edit_menu.add_command(label="Redo", command=self.redo)
@@ -161,6 +165,35 @@ class ImageEditorApp:
                 self.image = self.image.transpose(Image.FLIP_LEFT_RIGHT)
             elif direction == "vertical":
                 self.image = self.image.transpose(Image.FLIP_TOP_BOTTOM)
+            self.add_to_history()
+            self.display_image()
+
+    def adjust_hue(self):
+        if self.image:
+            self.image = ImageOps.colorize(self.image.convert("L"), "blue", "yellow")
+            self.add_to_history()
+            self.display_image()
+
+    def invert_colors(self):
+        if self.image:
+            self.image = ImageOps.invert(self.image)
+            self.add_to_history()
+            self.display_image()
+
+    def add_text(self):
+        if self.image:
+            text = simpledialog.askstring("Input", "Enter text to add:")
+            if text:
+                draw = ImageDraw.Draw(self.image)
+                font = ImageFont.load_default()
+                draw.text((10, 10), text, font=font, fill="white")
+                self.add_to_history()
+                self.display_image()
+
+    def draw_rectangle(self):
+        if self.image:
+            draw = ImageDraw.Draw(self.image)
+            draw.rectangle([50, 50, 150, 150], outline="red", width=5)
             self.add_to_history()
             self.display_image()
 
