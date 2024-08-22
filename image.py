@@ -53,6 +53,10 @@ class ImageEditorApp:
         self.edit_menu.add_separator()
         self.edit_menu.add_command(label="Undo", command=self.undo)
         self.edit_menu.add_command(label="Redo", command=self.redo)
+        self.edit_menu.add_command(label="Draw Ellipse", command=self.draw_ellipse)
+        self.edit_menu.add_command(label="Adjust Sharpness", command=self.adjust_sharpness)
+        self.edit_menu.add_command(label="Apply Median Filter", command=self.apply_median_filter)
+        self.edit_menu.add_command(label="Calculate Image Statistics", command=self.calculate_image_statistics)
         self.image = None
         self.history = []
         self.history_index = -1
@@ -275,6 +279,34 @@ class ImageEditorApp:
             plt.ylabel("Frequency")
             plt.plot(histogram)
             plt.show()
+
+    def draw_ellipse(self):
+        if self.image:
+            draw = ImageDraw.Draw(self.image)
+            draw.ellipse([100, 100, 200, 150], outline="orange", width=5)
+            self.add_to_history()
+            self.display_image()
+
+    def adjust_sharpness(self):
+        if self.image:
+            enhancer = ImageEnhance.Sharpness(self.image)
+            self.image = enhancer.enhance(2.0)
+            self.add_to_history()
+            self.display_image()
+
+    def apply_median_filter(self):
+        if self.image:
+            self.image = self.image.filter(ImageFilter.MedianFilter(size=5))
+            self.add_to_history()
+            self.display_image()
+
+    def calculate_image_statistics(self):
+        if self.image:
+            image_array = np.array(self.image)
+            mean = np.mean(image_array)
+            median = np.median(image_array)
+            stddev = np.std(image_array)
+            messagebox.showinfo("Image Statistics", f"Mean: {mean}\nMedian: {median}\nStandard Deviation: {stddev}")
 
 if __name__ == "__main__":
     root = tk.Tk()
