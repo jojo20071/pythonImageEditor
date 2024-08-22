@@ -1,6 +1,8 @@
 import tkinter as tk
-from tkinter import filedialog, simpledialog
+from tkinter import filedialog, simpledialog, messagebox
 from PIL import Image, ImageTk, ImageFilter, ImageEnhance, ImageOps, ImageDraw, ImageFont
+import numpy as np
+import matplotlib.pyplot as plt
 
 class ImageEditorApp:
     def __init__(self, root):
@@ -44,6 +46,10 @@ class ImageEditorApp:
         self.edit_menu.add_command(label="Adjust Opacity", command=self.adjust_opacity)
         self.edit_menu.add_command(label="Add Border", command=self.add_border)
         self.edit_menu.add_command(label="Apply Sepia Filter", command=self.apply_sepia_filter)
+        self.edit_menu.add_command(label="Draw Polygon", command=self.draw_polygon)
+        self.edit_menu.add_command(label="Adjust Gamma", command=self.adjust_gamma)
+        self.edit_menu.add_command(label="Apply Gaussian Blur", command=self.apply_gaussian_blur)
+        self.edit_menu.add_command(label="Calculate Histogram", command=self.calculate_histogram)
         self.edit_menu.add_separator()
         self.edit_menu.add_command(label="Undo", command=self.undo)
         self.edit_menu.add_command(label="Redo", command=self.redo)
@@ -236,6 +242,39 @@ class ImageEditorApp:
             self.image.putdata(sepia)
             self.add_to_history()
             self.display_image()
+
+    def draw_polygon(self):
+        if self.image:
+            draw = ImageDraw.Draw(self.image)
+            draw.polygon([(100, 100), (150, 200), (200, 150)], outline="purple", fill=None, width=5)
+            self.add_to_history()
+            self.display_image()
+
+    def adjust_gamma(self):
+        if self.image:
+            gamma = simpledialog.askfloat("Input", "Enter gamma value (0.1 - 5.0):", minvalue=0.1, maxvalue=5.0)
+            if gamma:
+                inv_gamma = 1.0 / gamma
+                table = [((i / 255.0) ** inv_gamma) * 255 for i in range(256)]
+                self.image = self.image.point(table)
+                self.add_to_history()
+                self.display_image()
+
+    def apply_gaussian_blur(self):
+        if self.image:
+            self.image = self.image.filter(ImageFilter.GaussianBlur(5))
+            self.add_to_history()
+            self.display_image()
+
+    def calculate_histogram(self):
+        if self.image:
+            histogram = self.image.histogram()
+            plt.figure()
+            plt.title("Histogram")
+            plt.xlabel("Pixel value")
+            plt.ylabel("Frequency")
+            plt.plot(histogram)
+            plt.show()
 
 if __name__ == "__main__":
     root = tk.Tk()
