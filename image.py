@@ -39,6 +39,11 @@ class ImageEditorApp:
         self.edit_menu.add_command(label="Invert Colors", command=self.invert_colors)
         self.edit_menu.add_command(label="Add Text", command=self.add_text)
         self.edit_menu.add_command(label="Draw Rectangle", command=self.draw_rectangle)
+        self.edit_menu.add_command(label="Draw Circle", command=self.draw_circle)
+        self.edit_menu.add_command(label="Draw Line", command=self.draw_line)
+        self.edit_menu.add_command(label="Adjust Opacity", command=self.adjust_opacity)
+        self.edit_menu.add_command(label="Add Border", command=self.add_border)
+        self.edit_menu.add_command(label="Apply Sepia Filter", command=self.apply_sepia_filter)
         self.edit_menu.add_separator()
         self.edit_menu.add_command(label="Undo", command=self.undo)
         self.edit_menu.add_command(label="Redo", command=self.redo)
@@ -194,6 +199,41 @@ class ImageEditorApp:
         if self.image:
             draw = ImageDraw.Draw(self.image)
             draw.rectangle([50, 50, 150, 150], outline="red", width=5)
+            self.add_to_history()
+            self.display_image()
+
+    def draw_circle(self):
+        if self.image:
+            draw = ImageDraw.Draw(self.image)
+            draw.ellipse([50, 50, 150, 150], outline="blue", width=5)
+            self.add_to_history()
+            self.display_image()
+
+    def draw_line(self):
+        if self.image:
+            draw = ImageDraw.Draw(self.image)
+            draw.line([0, 0, 200, 200], fill="green", width=5)
+            self.add_to_history()
+            self.display_image()
+
+    def adjust_opacity(self):
+        if self.image:
+            alpha = self.image.split()[3]
+            alpha = ImageEnhance.Brightness(alpha).enhance(0.5)
+            self.image.putalpha(alpha)
+            self.add_to_history()
+            self.display_image()
+
+    def add_border(self):
+        if self.image:
+            self.image = ImageOps.expand(self.image, border=10, fill="black")
+            self.add_to_history()
+            self.display_image()
+
+    def apply_sepia_filter(self):
+        if self.image:
+            sepia = [(r//2 + 100, g//2 + 50, b//2) for (r, g, b) in self.image.getdata()]
+            self.image.putdata(sepia)
             self.add_to_history()
             self.display_image()
 
