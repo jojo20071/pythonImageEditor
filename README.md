@@ -2,6 +2,9 @@
 
 A simple image editor by Johannes Häderle using Tkinter and Pillow.
 
+
+![Screenshot 2024-08-23 144911](https://github.com/user-attachments/assets/4ac1b251-2902-40dc-a7ea-116decddee33)
+
 ## Features
 
 - **File Operations:** Open, save (PNG, JPEG, BMP)
